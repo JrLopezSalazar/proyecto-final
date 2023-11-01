@@ -1,0 +1,83 @@
+import { verifyPassword } from "../../config/plugins/encriptedPassword.js";
+import generateJWT from "../../config/plugins/generate-jwt.js";
+import { AppError, catchAsync } from "../../errors/index.js";
+import { loginValidate, validateRegister } from "./user.schema.js";
+import { UserService } from "./user.services.js";
+
+
+const userService = new UserService
+
+export const login = catchAsync(async(req, res, next) => {
+    const { hasError, errorMessages, userData } = loginValidate(req.body)
+
+    if(hasError){
+        return res.status(422).json({
+            status: 'error',
+            message: errorMessages
+        })
+    }
+
+    const user = await userService.findUserByEmail(userData.email)
+
+    if(!user){
+        return next( new AppError('this account does not exist', 404))
+    }
+
+    const isCorrectPassword = await verifyPassword(userData.password, user.password)
+
+    if(!isCorrectPassword){
+        return next(new AppError("Incorrect email or password", 401))
+    }
+
+    const token = await generateJWT(user.id)
+    return res.status(200).json({
+        token,
+        user: {
+            name: user.name,
+            email: user.email
+        }
+    })
+});
+
+export const register = catchAsync(async(req, res, next) => {
+    const { hasError, errorMessages, userData } = validateRegister(req.body)
+
+    if(hasError){
+        return res.status(422).json({
+            status: 'error',
+            message: errorMessages
+        })
+    }
+    const user = await userService.createUser(userData)
+    
+    const token = await generateJWT(user.id)
+    return res.status(201).json({
+        token,
+        user: {
+            name: user.name,
+            email: user.email
+        }
+    })
+});
+
+export const updateUser = catchAsync(async(req, res, next) => {
+    return res.status(200).json(/* valor a retornar */)
+});
+export const deleteUser = catchAsync(async(req, res, next) => {
+    return res.status(200).json(/* valor a retornar */)
+});
+
+export const getAllOrders = catchAsync(async(req, res, next) => {
+    const orders = await userService.findAllOrders()
+    return res.json(orders)
+})
+
+export const getOneOrderById = catchAsync(async(req, res, next) => {
+
+})
+
+
+
+// export const deletectrl = catchAsync(async(req, res, next) => {
+//     return res.status(200).json(/* valor a retornar */)
+// });
