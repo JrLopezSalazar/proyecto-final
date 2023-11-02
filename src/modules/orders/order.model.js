@@ -1,31 +1,34 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../../config/database/database.js';
 
-const Meal = sequelize.define('meals', {
+const Order = sequelize.define('orders', {
     id: {
       primaryKey: true,
       allowNull: false,
       autoIncrement: true,
       type: DataTypes.INTEGER,
     },
-    name: {
-        type: DataTypes.STRING,
+    mealId: {
+        type: DataTypes.INTEGER,
         allowNull: false
     },
-    price: {
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    totalPrice: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    quantity: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
     status: {
-        type: DataTypes.ENUM('active', 'deleted'),
-        allowNull: false,
-        defaultValue: 'active'
+        type: DataTypes.ENUM('active', 'cancelled', 'completed'),
+      allowNull: false,
+      defaultValue: 'active'
     },
-    restaurantId: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-
 });
 
-export default Meal;
+export default Order;

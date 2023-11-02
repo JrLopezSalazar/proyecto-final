@@ -13,20 +13,30 @@ export class UserService {
             }
         })
     }
+
+    async findUserByEmail(email){
+        return await User.findOne({
+            where: {
+                email,
+            }
+        })
+    }
+
+
     async updateUser(user, data){
-        return user.create(data)
+        return user.update(data)
     }
     // User(){
 
     // }
     async deleteUser(user){
-        return await user.update({status: true})
+        return await user.update({status: false})
     }
 
-    async findAllOrders(id){
+    async findAllOrders(){
         return await User.findAll({
             where: {
-                id,
+                
             status: true}
         })
     }

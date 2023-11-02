@@ -1,7 +1,9 @@
+
 import Restaurant from "./restaurant.model.js"
 
-export class RestaurantService {
-    
+
+export class RestaurantService{
+
     async findAllRestaurants(){
         return await Restaurant.findAll({
             where: {
@@ -22,5 +24,18 @@ export class RestaurantService {
             }
         })
     }
+
+    
+
+
+    async update(restaurant, data){
+        //console.log(data)
+        return await restaurant.update(data)
+    }
+
+    async delete(restaurant){
+        return await restaurant.update({status: false})
+    }
+    
 }
 

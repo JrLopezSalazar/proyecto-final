@@ -35,25 +35,6 @@ const user = await userService.findOneUserById(decoded.id)
   }
   
 
-  //only if you have the functionality to change password
-  /*
-  if (user.passwordChangedAt) {
-    const changedTimeStamp = parseInt(
-      const changedTimeStamp = parseInt(
-      10
-    );
-
-    if (decoded.iat < changedTimeStamp) {
-      return next(
-        new AppError(
-          'User recently changed passwodrd!, please login again.',
-          401
-        )
-      );
-    }
-  }
-  */
-
   req.sessionUser = user;
   next();
 });
@@ -80,3 +61,16 @@ export const protectAccountOwner = catchAsync(async (req, res, next) => {
 
  next();
 });
+
+export const validExistUser = catchAsync(async(req,res,next) => {
+  const { id } = req.params;
+
+  const user = await userService.findOneUserById(id)
+
+  if(!user){
+    return next(new AppError('User not found', 404))
+  }
+
+  req.user = user;
+  next()
+})
